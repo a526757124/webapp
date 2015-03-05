@@ -36,12 +36,8 @@
 			</div>
 			<div class="mui-input-row">
 				<label>快递公司</label>
-				<select  data="http://192.168.1.53/ReceiptManagement/Receipt/GetCourierCompanyList">
+				<select id="BelongCompany.Id" data="http://192.168.1.53/ReceiptManagement/Receipt/GetCourierCompanyList">
 					<option value="0">请选择</option>
-					<option value="volvo">Volvo</option>
-					<option value="saab">Saab</option>
-					<option value="opel">Opel</option>
-					<option value="audi">Audi</option>
 				</select>
 			</div>
 			<div class="mui-input-row">
@@ -51,20 +47,22 @@
 
 			<div class="mui-button-row">
 				<button type="button" class="mui-btn mui-btn-primary" onclick="return true;">确认</button>&nbsp;&nbsp;
-				<button type="button" class="mui-btn mui-btn-danger" onclick="xhrCreate()">取消</button>
+				<button type="button" class="mui-btn mui-btn-danger" onclick="return true;">取消</button>
 			</div>
 		</form>
 	</body>
-	<!--<script type="text/javascript" src="res/prettify.js"></script>-->
+<script type="text/javascript" src="js/common.js" ></script>
 	<script>
 		mui.plusReady(function() {
-			console.log("当前页面URL：" + plus.webview.currentWebview().getURL());
+global.globalurl
 			mui.getJSON('http://192.168.1.53/ReceiptManagement/Receipt/GetCourierCompanyList', {}, function(data) {
 				//获得服务器响应
-				for(var i=0;i<data.length;i++){
-					document.getElementById()
+				for (var i = 0; i < data.length; i++) {
+					var op = document.createElement("option");
+					op.value = data[i].id;
+					op.text = data[i].text;
+					document.getElementById("BelongCompany.Id").appendChild(op);
 				}
-				alert(data);
 			});
 		});
 	</script>
