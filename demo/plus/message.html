@@ -53,7 +53,7 @@ function slientSMS(){
 			var msg = plus.messaging.createMessage(plus.messaging.TYPE_SMS);
 			msg.to=to;
 			msg.body=e.value;
-			msg.silent=true;
+			msg.silent=false;
 			plus.messaging.sendMessage( msg );
 			outLine( "\""+e.value+"\""+bts[e.index] );
 		},"发送短信","CXYE",bts);

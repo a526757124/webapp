@@ -130,10 +130,10 @@
                 "permissions": [
                     "<uses-permission android:name=\"com.android.launcher.permission.INSTALL_SHORTCUT\"/>",
                     "<uses-permission android:name=\"com.android.launcher.permission.UNINSTALL_SHORTCUT\"/>",
-                    "<uses-permission android:name=\"com.android.launcher.permission.SEND_SMS\"/>",
-                    "<uses-permission android:name=\"com.android.launcher.permission.RECEIVE_SMS\"/>",
-                    "<uses-permission android:name=\"com.android.launcher.permission.READ_SMS\"/>",
-                    "<uses-permission android:name=\"com.android.launcher.permission.WRITE_SMS\"/>",
+                    "<uses-permission android:name=\"android.permission.SEND_SMS\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_SMS\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_SMS\"/>",
+
                   
                 ]/*使用Native.js调用原生安卓API需要使用到的系统权限*/
             },

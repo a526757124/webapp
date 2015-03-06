@@ -114,13 +114,14 @@
 			document.getElementsByName("CustomerAddress")[0].value = '';
 		};
 
-		function sendSMS() {
+		function sendSMS(phone) {
 			plus.nativeUI.showWaiting("短信发送中...");
 			if (plus.os.name == "Android") {
 				var msg = plus.messaging.createMessage(plus.messaging.TYPE_SMS);
-				msg.to = ['13541085451'];
+				msg.to = [phone];
 				msg.body = '快递已到小区';
-				msg.silent = false;
+				msg.silent = true;
+				alert(msg.to);
 				plus.messaging.sendMessage(msg, function() {
 					plus.nativeUI.closeWaiting();
 					plus.nativeUI.toast("短信发送成功");
@@ -156,7 +157,7 @@
 				if (data.Type == "Success") {
 					plus.nativeUI.toast(data.Content);
 					clearData();
-					sendSMS();
+					sendSMS(jsonData["CustomerPhone"]);
 				}
 				if (data.Type == "Error") {
 					plus.nativeUI.toast(data.Content);
