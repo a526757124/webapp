@@ -1,5 +1,5 @@
 {
-    "@platforms": ["android", "iPhone", "iPad"],
+    "@platforms": ["android"],
     "id": "H516668A9",/*应用的标识，创建应用时自动生成，勿手动修改*/
     "name": "ctsapp",/*应用名称，程序桌面图标名称*/
     "version": {
@@ -118,7 +118,7 @@
                 "mobileprovision": "",/*iOS应用打包配置文件*/
                 "password": "",/*iOS应用打包个人证书导入密码*/
                 "p12": "",/*iOS应用打包个人证书，打包配置文件关联的个人证书*/
-                "devices": "universal",/*iOS应用支持的设备类型，可取值iphone/ipad/universal*/
+                "devices": "",/*iOS应用支持的设备类型，可取值iphone/ipad/universal*/
                 "frameworks":[
                 ]/*调用Native.js调用原生Objective-c API需要引用的FrameWork，如需调用GameCenter，则添加"GameKit.framework"*/
             },
@@ -129,7 +129,12 @@
                 "aliasname": "",/*Android应用打包使用密钥库中证书的别名*/
                 "permissions": [
                     "<uses-permission android:name=\"com.android.launcher.permission.INSTALL_SHORTCUT\"/>",
-                    "<uses-permission android:name=\"com.android.launcher.permission.UNINSTALL_SHORTCUT\"/>"
+                    "<uses-permission android:name=\"com.android.launcher.permission.UNINSTALL_SHORTCUT\"/>",
+                    "<uses-permission android:name=\"com.android.launcher.permission.SEND_SMS\"/>",
+                    "<uses-permission android:name=\"com.android.launcher.permission.RECEIVE_SMS\"/>",
+                    "<uses-permission android:name=\"com.android.launcher.permission.READ_SMS\"/>",
+                    "<uses-permission android:name=\"com.android.launcher.permission.WRITE_SMS\"/>",
+                  
                 ]/*使用Native.js调用原生安卓API需要使用到的系统权限*/
             },
             "orientation": [

@@ -17,6 +17,15 @@
 			h5 {
 				margin: 5px 7px;
 			}
+			.mui-backdrop {
+				position: fixed;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				z-index: 998;
+				background-color: rgba(0, 0, 0, .3);
+			}
 		</style>
 	</head>
 
@@ -24,38 +33,36 @@
 		<form class="mui-input-group">
 			<div class="mui-input-row">
 				<label>客户名称</label>
-				<input type="text" class="mui-input-clear" placeholder="姓名">
+				<input type="text" name="CustomerName" class="mui-input-clear" placeholder="姓名">
 			</div>
 			<div class="mui-input-row">
 				<label>客户号码</label>
-				<input type="number" class="mui-input-clear" placeholder="手机号码">
+				<input type="number" name="CustomerPhone" class="mui-input-clear" placeholder="电话号码">
 			</div>
 			<div class="mui-input-row">
 				<label>快递单号</label>
-				<input type="text" class="mui-input-clear" placeholder="快递单号">
+				<input type="text" name="CourierNumber" class="mui-input-clear" placeholder="快递单号[8-20]">
 			</div>
 			<div class="mui-input-row">
 				<label>快递公司</label>
-				<select id="BelongCompany.Id" data="http://192.168.1.53/ReceiptManagement/Receipt/GetCourierCompanyList">
+				<select id="BelongCompany.Id" name="BelongCompany.Id">
 					<option value="0">请选择</option>
 				</select>
 			</div>
 			<div class="mui-input-row">
 				<label>客户地址</label>
-				<input type="text" class="mui-input-clear" placeholder="地址">
+				<input type="text" name="CustomerAddress" class="mui-input-clear" placeholder="地址">
 			</div>
 
-			<div class="mui-button-row">
-				<button type="button" class="mui-btn mui-btn-primary" onclick="return true;">确认</button>&nbsp;&nbsp;
-				<button type="button" class="mui-btn mui-btn-danger" onclick="return true;">取消</button>
+			<div class="mui-content-padded">
+				<button type="button" class="mui-btn mui-btn-primary mui-btn-block" onclick="submitData()">保 存</button>
 			</div>
 		</form>
 	</body>
-<script type="text/javascript" src="js/common.js" ></script>
+	<script type="text/javascript" src="js/common.js"></script>
 	<script>
 		mui.plusReady(function() {
-global.globalurl
-			mui.getJSON('http://192.168.1.53/ReceiptManagement/Receipt/GetCourierCompanyList', {}, function(data) {
+			mui.getJSON(globalSetting.serverURL + 'ReceiptManagement/Receipt/GetCourierCompanyList', {}, function(data) {
 				//获得服务器响应
 				for (var i = 0; i < data.length; i++) {
 					var op = document.createElement("option");
@@ -65,6 +72,97 @@ global.globalurl
 				}
 			});
 		});
+
+		function verifyData() {
+			var data = document.getElementsByName("CustomerName")[0].value;
+			if (!data) {
+				document.getElementsByName("CustomerName")[0].focus();
+				alert("客户名称不能为空");
+				return false;
+			}
+			var data = document.getElementsByName("CustomerPhone")[0].value;
+			if (!data || !(data.length > 8 && data.length <= 12)) {
+				document.getElementsByName("CustomerPhone")[0].focus();
+				alert("请输入正确的电话号码");
+				return false;
+			}
+			var data = document.getElementsByName("CourierNumber")[0].value;
+			if (data) {
+				if (data.length < 8 || data.length > 20) {
+					document.getElementsByName("CourierNumber")[0].focus();
+					alert("快递单号长度输入错误");
+					return false;
+				}
+			}
+			var data = document.getElementsByName("BelongCompany.Id")[0].value;
+			if (!data || data == 0) {
+				document.getElementsByName("BelongCompany.Id")[0].focus();
+				alert("请选择快递公司");
+				return false;
+			}
+			return true;
+			/*jsonData["CourierNumber"] = document.getElementsByName("CourierNumber")[0].value;
+			jsonData["BelongCompany.Id"] = document.getElementsByName("BelongCompany.Id")[0].value;
+			jsonData["CustomerAddress"] = document.getElementsByName("CustomerAddress")[0].value;*/
+		};
+
+		function clearData() {
+			document.getElementsByName("CustomerName")[0].value = '';
+			document.getElementsByName("CustomerPhone")[0].value = '';
+			document.getElementsByName("CourierNumber")[0].value = '';
+			document.getElementsByName("BelongCompany.Id")[0].value = 0;
+			document.getElementsByName("CustomerAddress")[0].value = '';
+		};
+
+		function sendSMS() {
+			plus.nativeUI.showWaiting("短信发送中...");
+			if (plus.os.name == "Android") {
+				var msg = plus.messaging.createMessage(plus.messaging.TYPE_SMS);
+				msg.to = ['13541085451'];
+				msg.body = '快递已到小区';
+				msg.silent = false;
+				plus.messaging.sendMessage(msg, function() {
+					plus.nativeUI.closeWaiting();
+					plus.nativeUI.toast("短信发送成功");
+				}, function() {
+					plus.nativeUI.closeWaiting();
+					plus.nativeUI.toast("短信发送失败");
+				});
+			} else {
+				plus.nativeUI.alert("此平台不支持后台发送短信功能！");
+			}
+		};
+		var mask = mui.createMask(function() {}); //callback为用户点击蒙版时自动执行的回调；
+		/**
+		 * 提交表单
+		 */
+		function submitData() {
+			if (!verifyData()) {
+				return;
+			}
+			var url = globalSetting.serverURL + 'ReceiptManagement/Receipt/Add';
+			mask.show(); //显示遮罩
+			var jsonData = {};
+			jsonData["CustomerName"] = document.getElementsByName("CustomerName")[0].value;
+			jsonData["CustomerPhone"] = document.getElementsByName("CustomerPhone")[0].value;
+			jsonData["CourierNumber"] = document.getElementsByName("CourierNumber")[0].value;
+			jsonData["BelongCompany.Id"] = document.getElementsByName("BelongCompany.Id")[0].value;
+			jsonData["CustomerAddress"] = document.getElementsByName("CustomerAddress")[0].value;
+			plus.nativeUI.showWaiting("等待中...");
+			mui.post(url, jsonData, function(data) {
+				//服务器返回响应，根据响应结果，分析;
+				mask.close(); //关闭遮罩
+				plus.nativeUI.closeWaiting();
+				if (data.Type == "Success") {
+					plus.nativeUI.toast(data.Content);
+					clearData();
+					sendSMS();
+				}
+				if (data.Type == "Error") {
+					plus.nativeUI.toast(data.Content);
+				}
+			}, 'json');
+		};
 	</script>
 
 </html>
