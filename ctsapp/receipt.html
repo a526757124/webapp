@@ -62,7 +62,7 @@
 	<script type="text/javascript" src="js/common.js"></script>
 	<script>
 		mui.plusReady(function() {
-			mui.getJSON(globalSetting.serverURL + 'ReceiptManagement/Receipt/GetCourierCompanyList', {}, function(data) {
+			mui.getJSON(globalSetting.getServerURL() + 'ReceiptManagement/Receipt/GetCourierCompanyList', {}, function(data) {
 				//获得服务器响应
 				for (var i = 0; i < data.length; i++) {
 					var op = document.createElement("option");
@@ -110,19 +110,18 @@
 			document.getElementsByName("CustomerName")[0].value = '';
 			document.getElementsByName("CustomerPhone")[0].value = '';
 			document.getElementsByName("CourierNumber")[0].value = '';
-			document.getElementsByName("BelongCompany.Id")[0].value = 0;
+			//document.getElementsByName("BelongCompany.Id")[0].value = 0;
 			document.getElementsByName("CustomerAddress")[0].value = '';
 		};
 
-		function sendSMS(phone) {
+		function sendSMS(phone,v) {
 			plus.nativeUI.showWaiting("短信发送中...");
 			if (plus.os.name == "Android") {
 				var msg = plus.messaging.createMessage(plus.messaging.TYPE_SMS);
 				msg.to = [phone];
-				msg.body = '快递已到小区';
-				msg.silent = true;
-				alert(msg.to);
-				plus.messaging.sendMessage(msg, function() {
+				msg.body = '你好,你有'+v+'到了放在8栋1单元101(西门入口右手第一栋),麻烦拿一下(早上九点至晚上八点),谢谢!';
+				msg.silent = false;
+				plus.messaging.sendMessage(msg, function() {''
 					plus.nativeUI.closeWaiting();
 					plus.nativeUI.toast("短信发送成功");
 				}, function() {
@@ -141,7 +140,7 @@
 			if (!verifyData()) {
 				return;
 			}
-			var url = globalSetting.serverURL + 'ReceiptManagement/Receipt/Add';
+			var url = globalSetting.getServerURL() + 'ReceiptManagement/Receipt/Add';
 			mask.show(); //显示遮罩
 			var jsonData = {};
 			jsonData["CustomerName"] = document.getElementsByName("CustomerName")[0].value;
@@ -156,8 +155,12 @@
 				plus.nativeUI.closeWaiting();
 				if (data.Type == "Success") {
 					plus.nativeUI.toast(data.Content);
+					var obj= document.getElementById("BelongCompany.Id");
+					var index=obj.selectedIndex;
+					var val=obj.options[index].text;
+					sendSMS(jsonData["CustomerPhone"],val);
 					clearData();
-					sendSMS(jsonData["CustomerPhone"]);
+					
 				}
 				if (data.Type == "Error") {
 					plus.nativeUI.toast(data.Content);

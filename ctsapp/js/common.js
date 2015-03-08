@@ -1,3 +1,5 @@
 ﻿var globalSetting = globalSetting || {
-	serverURL:"http://192.168.1.53/",//服务端地址
+	getServerURL:function(){
+		return plus.storage.getItem("serverURL");	
+	},//"http://172.27.75.2/",//服务端地址
 }
