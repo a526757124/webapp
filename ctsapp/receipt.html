@@ -122,7 +122,6 @@
 		function sendSMS(phone, i) {
 			if (plus.os.name == "Android") {
 				plus.nativeUI.showWaiting("加载中...");
-				alert(i);
 				mui.getJSON(globalSetting.getServerURL() + 'SystemSettings/CourierCompany/GetById', {
 					id: i
 				}, function(data) {
