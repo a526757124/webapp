@@ -53,7 +53,10 @@
 				<label>客户地址</label>
 				<input type="text" name="CustomerAddress" class="mui-input-clear" placeholder="地址">
 			</div>
-
+			<div class="mui-input-row">
+				<label>备注</label>
+				<input type="text" name="Remark" class="mui-input-clear" placeholder="备注">
+			</div>
 			<div class="mui-content-padded">
 				<button type="button" class="mui-btn mui-btn-primary mui-btn-block" onclick="submitData()">保 存</button>
 			</div>
@@ -62,7 +65,9 @@
 	<script type="text/javascript" src="js/common.js"></script>
 	<script>
 		mui.plusReady(function() {
+			plus.nativeUI.showWaiting("加载中...");
 			mui.getJSON(globalSetting.getServerURL() + 'ReceiptManagement/Receipt/GetCourierCompanyList', {}, function(data) {
+				plus.nativeUI.closeWaiting();
 				//获得服务器响应
 				for (var i = 0; i < data.length; i++) {
 					var op = document.createElement("option");
@@ -114,19 +119,29 @@
 			document.getElementsByName("CustomerAddress")[0].value = '';
 		};
 
-		function sendSMS(phone,v) {
-			plus.nativeUI.showWaiting("短信发送中...");
+		function sendSMS(phone, i) {
 			if (plus.os.name == "Android") {
-				var msg = plus.messaging.createMessage(plus.messaging.TYPE_SMS);
-				msg.to = [phone];
-				msg.body = '你好,你有'+v+'到了放在8栋1单元101(西门入口右手第一栋),麻烦拿一下(早上九点至晚上八点),谢谢!';
-				msg.silent = true;
-				plus.messaging.sendMessage(msg, function() {''
+				plus.nativeUI.showWaiting("加载中...");
+				alert(i);
+				mui.getJSON(globalSetting.getServerURL() + 'SystemSettings/CourierCompany/GetById', {
+					id: i
+				}, function(data) {
 					plus.nativeUI.closeWaiting();
-					plus.nativeUI.toast("短信发送成功");
-				}, function() {
-					plus.nativeUI.closeWaiting();
-					plus.nativeUI.toast("短信发送失败");
+					if (data.Data.IsSendSMS) {
+						plus.nativeUI.showWaiting("短信发送中...");
+						var msg = plus.messaging.createMessage(plus.messaging.TYPE_SMS);
+						msg.to = [phone];
+						msg.body = '你好,你有' + data.Data.CourierName + '到了放在8栋1单元101(西门入口右手第一栋),麻烦拿一下(早上九点至晚上八点),谢谢!';
+						msg.silent = true;
+						//获得服务器响应
+						plus.messaging.sendMessage(msg, function() {
+							plus.nativeUI.closeWaiting();
+							plus.nativeUI.toast("短信发送成功");
+						}, function() {
+							plus.nativeUI.closeWaiting();
+							plus.nativeUI.toast("短信发送失败");
+						});
+					}
 				});
 			} else {
 				plus.nativeUI.alert("此平台不支持后台发送短信功能！");
@@ -148,6 +163,7 @@
 			jsonData["CourierNumber"] = document.getElementsByName("CourierNumber")[0].value;
 			jsonData["BelongCompany.Id"] = document.getElementsByName("BelongCompany.Id")[0].value;
 			jsonData["CustomerAddress"] = document.getElementsByName("CustomerAddress")[0].value;
+			jsonData["Remark"] = document.getElementsByName("Remark")[0].value;
 			plus.nativeUI.showWaiting("等待中...");
 			mui.post(url, jsonData, function(data) {
 				//服务器返回响应，根据响应结果，分析;
@@ -155,12 +171,11 @@
 				plus.nativeUI.closeWaiting();
 				if (data.Type == "Success") {
 					plus.nativeUI.toast(data.Content);
-					var obj= document.getElementById("BelongCompany.Id");
-					var index=obj.selectedIndex;
-					var val=obj.options[index].text;
-					sendSMS(jsonData["CustomerPhone"],val);
+					/*var obj = document.getElementById("BelongCompany.Id");
+					var index = obj.selectedIndex;
+					var val = obj.options[index].text;*/
+					sendSMS(jsonData["CustomerPhone"], jsonData["BelongCompany.Id"]);
 					clearData();
-					
 				}
 				if (data.Type == "Error") {
 					plus.nativeUI.toast(data.Content);
