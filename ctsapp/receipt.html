@@ -49,10 +49,10 @@
 					<option value="0">请选择</option>
 				</select>
 			</div>
-			<div class="mui-input-row">
+			<!--<div class="mui-input-row">
 				<label>客户地址</label>
 				<input type="text" name="CustomerAddress" class="mui-input-clear" placeholder="地址">
-			</div>
+			</div>-->
 			<div class="mui-input-row">
 				<label>备注</label>
 				<input type="text" name="Remark" class="mui-input-clear" placeholder="备注">
@@ -116,7 +116,8 @@
 			document.getElementsByName("CustomerPhone")[0].value = '';
 			document.getElementsByName("CourierNumber")[0].value = '';
 			//document.getElementsByName("BelongCompany.Id")[0].value = 0;
-			document.getElementsByName("CustomerAddress")[0].value = '';
+			//document.getElementsByName("CustomerAddress")[0].value = '';
+			document.getElementsByName("Remark")[0].value = '';
 		};
 
 		function sendSMS(phone, i) {
@@ -130,7 +131,7 @@
 						plus.nativeUI.showWaiting("短信发送中...");
 						var msg = plus.messaging.createMessage(plus.messaging.TYPE_SMS);
 						msg.to = [phone];
-						msg.body = '你好,你有' + data.Data.CourierName + '到了放在8栋1单元101(西门入口右手第一栋),麻烦拿一下(早上九点至晚上八点),谢谢!';
+						msg.body = '你好,你有' + data.Data.CourierName + '到了放在8栋1单元101(西门入口右手第一栋) 快递收发点 (圆通\汇通\国通\全峰\快捷\顺丰),麻烦拿一下(早上九点至晚上八点),谢谢!';
 						msg.silent = true;
 						//获得服务器响应
 						plus.messaging.sendMessage(msg, function() {
@@ -161,7 +162,7 @@
 			jsonData["CustomerPhone"] = document.getElementsByName("CustomerPhone")[0].value;
 			jsonData["CourierNumber"] = document.getElementsByName("CourierNumber")[0].value;
 			jsonData["BelongCompany.Id"] = document.getElementsByName("BelongCompany.Id")[0].value;
-			jsonData["CustomerAddress"] = document.getElementsByName("CustomerAddress")[0].value;
+			//jsonData["CustomerAddress"] = document.getElementsByName("CustomerAddress")[0].value;
 			jsonData["Remark"] = document.getElementsByName("Remark")[0].value;
 			plus.nativeUI.showWaiting("等待中...");
 			mui.post(url, jsonData, function(data) {
