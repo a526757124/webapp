@@ -131,7 +131,7 @@
 						plus.nativeUI.showWaiting("短信发送中...");
 						var msg = plus.messaging.createMessage(plus.messaging.TYPE_SMS);
 						msg.to = [phone];
-						msg.body = '你好,你有' + data.Data.CourierName + '到了放在8栋1单元101[快递收发点 (圆通汇通国通全峰快捷顺丰)],麻烦拿一下(早9晚8),谢谢!';
+						msg.body = '你好,你有' + data.Data.CourierName + '到了放在8栋1单元101[快递超市],麻烦拿一下(早9晚10),谢谢!';
 						msg.silent = true;
 						//获得服务器响应
 						plus.messaging.sendMessage(msg, function() {
